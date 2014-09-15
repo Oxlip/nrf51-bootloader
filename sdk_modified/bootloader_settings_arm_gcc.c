@@ -13,6 +13,7 @@
 #include "bootloader_settings.h"
 #include <stdint.h>
 #include "dfu_types.h"
+#include "dfu_custom.h"
 
 /**< This variable reserves a codepage for bootloader specific settings,
  * to ensure the compiler doesn't locate any code or variables at his location.
@@ -23,7 +24,7 @@ uint8_t  m_boot_settings[CODE_PAGE_SIZE] __attribute__((section(".bootloader_set
  * address to the UICR register. This value will be written in the HEX file and thus
  * written to UICR when the bootloader is flashed into the chip.
  */
-uint32_t m_uicr_bootloader_start_address __attribute__((section(".bootloader_addr"))) __attribute__((used)) = BOOTLOADER_REGION_START;
+uint32_t m_uicr_bootloader_start_address __attribute__((section(".bootloader_addr"))) __attribute__((used)) = BOOTLOADER_REGION_START_CUSTOM;
 
 
 void bootloader_util_settings_get(const bootloader_settings_t ** pp_bootloader_settings)
