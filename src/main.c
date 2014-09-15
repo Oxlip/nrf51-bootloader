@@ -27,6 +27,7 @@
  * -# Activate Image, boot application.
  *
  */
+#include "dfu_custom.h"
 #include "dfu_transport.h"
 #include "bootloader.h"
 #include "bootloader_util.h"
@@ -234,10 +235,12 @@ int main(void)
     bool     app_reset = (NRF_POWER->GPREGRET == BOOTLOADER_DFU_START);
 
     leds_init();
+    nrf_gpio_pin_set(LED_0);
+    nrf_gpio_pin_set(LED_1);
 
     // This check ensures that the defined fields in the bootloader corresponds with actual
     // setting in the nRF51 chip.
-    APP_ERROR_CHECK_BOOL(*((uint32_t *)NRF_UICR_BOOT_START_ADDRESS) == BOOTLOADER_REGION_START);
+    APP_ERROR_CHECK_BOOL(*((uint32_t *)NRF_UICR_BOOT_START_ADDRESS) == BOOTLOADER_REGION_START_CUSTOM);
     APP_ERROR_CHECK_BOOL(NRF_FICR->CODEPAGESIZE == CODE_PAGE_SIZE);
 
     // Initialize.
