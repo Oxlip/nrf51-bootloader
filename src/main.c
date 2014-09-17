@@ -235,8 +235,6 @@ int main(void)
     bool     app_reset = (NRF_POWER->GPREGRET == BOOTLOADER_DFU_START);
 
     leds_init();
-    nrf_gpio_pin_set(LED_0);
-    nrf_gpio_pin_set(LED_1);
 
     // This check ensures that the defined fields in the bootloader corresponds with actual
     // setting in the nRF51 chip.
@@ -275,13 +273,13 @@ int main(void)
         err_code = sd_power_gpregret_clr(POWER_GPREGRET_GPREGRET_Msk);
         APP_ERROR_CHECK(err_code);
 
-        //nrf_gpio_pin_set(LED_2);
+        //nrf_gpio_pin_set(LED_0);
 
         // Initiate an update of the firmware.
         err_code = bootloader_dfu_start();
         APP_ERROR_CHECK(err_code);
 
-        //nrf_gpio_pin_clear(LED_2);
+        //nrf_gpio_pin_clear(LED_1);
     }
 
     if (bootloader_app_is_valid(DFU_BANK_0_REGION_START))
