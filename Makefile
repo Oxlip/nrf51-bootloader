@@ -14,9 +14,8 @@ SDK_SRCS += ble_advdata.c
 SDK_SRCS += ble_srv_common.c
 
 # Modified version of sdk file
-SDK_SRCS += bootloader_util_arm_gcc.c
+SDK_SRCS += bootloader_util_gcc_cuss.c
 SDK_SRCS += dfu_transport_ble_PCA10001.c
-SDK_SRCS += bootloader_settings_arm_gcc.c
 SDK_SRCS += pstorage_cortex.c
 
 APPLICATION_SRCS += src/gcc_aeabi.c
@@ -42,8 +41,8 @@ LIBRARY_PATHS += include
 LIBRARY_PATHS += $(SDK_PATH)/Include/bootloader_dfu
 LIBRARY_PATHS += $(SDK_PATH)/Include/bootloader_dfu/hci_transport
 
-CFLAGS  = -DDEBUG -g3 -O0 -I . -Werror -nostdlib
-LDFLAGS = -nostdlib
+#CFLAGS  = -O2
+CFLAGS  = -DDEBUG -g3 -O0 -I . -Werror
 
 GDB_PORT_NUMBER = 2331
 

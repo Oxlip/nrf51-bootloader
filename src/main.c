@@ -201,7 +201,7 @@ static void ble_stack_init(bool init_softdevice)
         APP_ERROR_CHECK(err_code);
     }
     
-    err_code = sd_softdevice_vector_table_base_set(BOOTLOADER_REGION_START);
+    err_code = sd_softdevice_vector_table_base_set(BOOTLOADER_REGION_START_CUSTOM);
     APP_ERROR_CHECK(err_code);
    
     SOFTDEVICE_HANDLER_INIT(NRF_CLOCK_LFCLKSRC_XTAL_20_PPM, true);
