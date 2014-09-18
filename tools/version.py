@@ -6,16 +6,23 @@ import git
 repo = git.Repo('.')
 assert repo.bare == False
 
-if repo.head.reference.name != 'master':
+if repo.head.reference.name == 'master':
     version = '0x00000000'
 else:
-    tag = repo.tags[0].name
+    tag = None
+    for tagref in repo.tags:
+        if tagref.commit == repo.head.reference.commit:
+            tag = tagref.name
+            break
+    if tag is None:
+        print 'Can\' get the version to build this release'
+
     m = re.match(r'v(?P<major>\d+).(?P<minor>\d+).(?P<bugfix>\d+)', tag)
     if m is None:
         print 'Can\' get the version to build this release'
-    version  = (m.group('major') << 24)
-    version += (m.group('minor') << 12)
-    version += m.group('bugfix')
+    version  = (int(m.group('major')) << 24)
+    version += (int(m.group('minor')) << 12)
+    version +=  int(m.group('bugfix'))
     version = hex(version)
 
 with open('include/version.h', 'a') as f:
