@@ -1,3 +1,4 @@
+# Modified version of sdk file
 SDK_SRCS += dfu_dual_bank.c
 SDK_SRCS += bootloader.c
 SDK_SRCS += ble_dfu.c
@@ -12,8 +13,6 @@ SDK_SRCS += nrf_delay.c
 SDK_SRCS += ble_conn_params.c
 SDK_SRCS += ble_advdata.c
 SDK_SRCS += ble_srv_common.c
-
-# Modified version of sdk file
 SDK_SRCS += bootloader_util_gcc_cuss.c
 SDK_SRCS += dfu_transport_ble_PCA10001.c
 SDK_SRCS += pstorage_cortex.c
@@ -31,15 +30,13 @@ BOARD = BOARD_PCA10001
 USE_SOFTDEVICE = s110
 
 EXTERNAL_PATH = $(MAKEFILE_DIR)/external
-SDK_PATH = /opt/nrf51sdk/nrf51822/
+SDK_PATH = $(MAKEFILE_DIR)
 MAKEFILE_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 TEMPLATE_PATH = $(MAKEFILE_DIR)/nrf51-pure-gcc-setup/template/
 SOFTDEVICE = $(EXTERNAL_PATH)/s110_nrf51822_7.0.0_softdevice.hex
 
 SOURCE_PATHS  += src sdk_modified
 LIBRARY_PATHS += include
-LIBRARY_PATHS += $(SDK_PATH)/Include/bootloader_dfu
-LIBRARY_PATHS += $(SDK_PATH)/Include/bootloader_dfu/hci_transport
 
 #CFLAGS  = -O2
 CFLAGS  = -DDEBUG -g3 -O0 -I . -Werror
