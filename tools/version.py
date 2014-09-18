@@ -6,7 +6,7 @@ import git
 repo = git.Repo('.')
 assert repo.bare == False
 
-if repo.head.reference.name == 'master':
+if repo.head.reference.name != 'master':
     version = '0x00000000'
 else:
     tag = None
