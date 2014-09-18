@@ -573,7 +573,10 @@ static void on_dfu_evt(ble_dfu_t * p_dfu, ble_dfu_evt_t * p_evt)
             APP_ERROR_CHECK(err_code);
             break;
 
-        default:
+       case BLE_DFU_INFOS_SW_SEND:
+            err_code = 0;
+            APP_ERROR_CHECK(err_code);
+       default:
             // Unsupported event received from DFU Service. Ignore.
             break;
     }

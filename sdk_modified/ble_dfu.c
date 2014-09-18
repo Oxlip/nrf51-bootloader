@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stddef.h>
+#include "version.h"
 
 #define MAX_DFU_PKT_LEN         20                                              /**< Maximum length (in bytes) of the DFU Packet characteristic. */
 #define PKT_START_DFU_PARAM_LEN 2                                               /**< Length (in bytes) of the parameters for Packet Start DFU Request. */
@@ -39,7 +40,8 @@ enum
     OP_CODE_IMAGE_SIZE_REQ     = 7,                                             /**< Value of the Op code field for 'Report received image size' command.*/
     OP_CODE_PKT_RCPT_NOTIF_REQ = 8,                                             /**< Value of the Op code field for 'Request packet receipt notification.*/
     OP_CODE_RESPONSE           = 16,                                            /**< Value of the Op code field for 'Response.*/
-    OP_CODE_PKT_RCPT_NOTIF     = 17                                             /**< Value of the Op code field for 'Packets Receipt Notification'.*/
+    OP_CODE_PKT_RCPT_NOTIF     = 17,                                            /**< Value of the Op code field for 'Packets Receipt Notification'.*/
+    OP_CODE_INFOS_SW_REQ       = 18                                             /**< Value of the Op code field for 'Informations on software' command.*/
 };
 
 static bool    m_is_dfu_service_initialized = false;                            /**< Variable to check if the DFU service was initialized by the application.*/
@@ -314,6 +316,10 @@ static uint32_t on_ctrl_pt_write(ble_dfu_t * p_dfu, ble_gatts_evt_write_t * p_bl
             p_dfu->evt_handler(p_dfu, &ble_dfu_evt);
             break;
 
+        case OP_CODE_INFOS_SW_REQ:
+            ble_dfu_evt.ble_dfu_evt_type = BLE_DFU_INFOS_SW_SEND;
+
+            p_dfu->evt_handler(p_dfu, &ble_dfu_evt);
         default:
             // Unsupported op code.
             return ble_dfu_response_send(p_dfu,
@@ -510,6 +516,49 @@ uint32_t ble_dfu_bytes_rcvd_report(ble_dfu_t * p_dfu, uint32_t num_of_firmware_b
     m_notif_buffer[index++] = (uint8_t)BLE_DFU_RESP_VAL_SUCCESS;
 
     index += uint32_encode(num_of_firmware_bytes_rcvd, &m_notif_buffer[index]);
+
+    memset(&hvx_params, 0, sizeof(hvx_params));
+
+    hvx_params.handle = p_dfu->dfu_ctrl_pt_handles.value_handle;
+    hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+    hvx_params.offset = 0;
+    hvx_params.p_len  = &index;
+    hvx_params.p_data = m_notif_buffer;
+
+    return sd_ble_gatts_hvx(p_dfu->conn_handle, &hvx_params);
+}
+
+
+uint32_t ble_dfu_infos_sw(ble_dfu_t * p_dfu)
+{
+    if (p_dfu == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
+
+    if ((p_dfu->conn_handle == BLE_CONN_HANDLE_INVALID) || !m_is_dfu_service_initialized)
+    {
+        return NRF_ERROR_INVALID_STATE;
+    }
+
+    ble_gatts_hvx_params_t hvx_params;
+    uint16_t               index = 0;
+    uint32_t               bl_version  = BOOTLOADER_VERSION;
+    uint32_t               app_version = 0xCAFEBEFF;
+    uint16_t               app_type    = 0x0000;
+
+    // Encode the Op Code.
+    m_notif_buffer[index++] = OP_CODE_RESPONSE;
+
+    // Encode the Reqest Op Code.
+    m_notif_buffer[index++] = OP_CODE_INFOS_SW_REQ;
+
+    // Encode the Response Value.
+    m_notif_buffer[index++] = (uint8_t)BLE_DFU_RESP_VAL_SUCCESS;
+
+    index += uint32_encode(bl_version, &m_notif_buffer[index]);
+    index += uint32_encode(app_version, &m_notif_buffer[index]);
+    index += uint16_encode(app_type, &m_notif_buffer[index]);
 
     memset(&hvx_params, 0, sizeof(hvx_params));
 

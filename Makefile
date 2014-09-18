@@ -43,4 +43,14 @@ CFLAGS  = -DDEBUG -g3 -O0 -I . -Werror
 
 GDB_PORT_NUMBER = 2331
 
+all: version.h
+
+version.h:
+	./tools/version.py
+
+app_clean:
+	$(RM) include/version.h
+
+clean: app_clean
+
 include $(TEMPLATE_PATH)/Makefile

@@ -36,15 +36,6 @@ typedef enum {
     /* ble service */
     BLE_DFU_SERVICE_UUID = 0x1664,
 
-    /* bootloader version */
-    BLE_DFU_BL_VERSION_UUID,
-
-    /* application version */
-    BLE_DFU_APP_VERSION_UUID,
-
-    /* application type */
-    BLE_DFU_APP_TYPE_UUID,
-
     /* dfu packet */
     BLE_DFU_PKT_CHAR_UUID,
 
@@ -70,7 +61,8 @@ typedef enum
     BLE_DFU_PKT_RCPT_NOTIF_ENABLED,                                     /**< The event indicating that the peer has enabled packet receipt notifications. It is the responsibility of the application to call @ref ble_dfu_pkts_rcpt_notify each time the number of packets indicated by num_of_pkts field in @ref ble_dfu_evt_t is received.*/
     BLE_DFU_PKT_RCPT_NOTIF_DISABLED,                                    /**< The event indicating that the peer has disabled the packet receipt notifications.*/
     BLE_DFU_PACKET_WRITE,                                               /**< The event indicating that the peer has written a value to the 'DFU Packet' characteristic. The data received from the peer will be present in the @ref ble_dfu_pkt_write element contained within @ref ble_dfu_evt_t.*/
-    BLE_DFU_BYTES_RECEIVED_SEND                                         /**< The event indicating that the peer is requesting for the number of bytes of firmware data last received by the application. It is the responsibility of the application to call @ref ble_dfu_pkts_rcpt_notify in response to this event. */
+    BLE_DFU_BYTES_RECEIVED_SEND,                                        /**< The event indicating that the peer is requesting for the number of bytes of firmware data last received by the application. It is the responsibility of the application to call @ref ble_dfu_pkts_rcpt_notify in response to this event. */
+    BLE_DFU_INFOS_SW_SEND                                               /**< The event indicating that the peer is requesting for the software information. */
 } ble_dfu_evt_type_t;
 
 /**@brief   DFU Procedure type.
