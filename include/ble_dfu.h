@@ -32,11 +32,28 @@
 #include "ble.h"
 #include "ble_srv_common.h"
 
-#define BLE_DFU_SERVICE_UUID     0x1530                                 /**< The UUID of the DFU Service. */
-#define BLE_DFU_PKT_CHAR_UUID    0x1532                                 /**< The UUID of the DFU Packet Characteristic. */
-#define BLE_DFU_CTRL_PT_UUID     0x1531                                 /**< The UUID of the DFU Control Point. */
-#define BLE_DFU_STATUS_REP_UUID  0x1533                                 /**< The UUID of the DFU Status Report Characteristic. */
+typedef enum {
+    /* ble service */
+    BLE_DFU_SERVICE_UUID = 0x1664,
 
+    /* bootloader version */
+    BLE_DFU_BL_VERSION_UUID,
+
+    /* application version */
+    BLE_DFU_APP_VERSION_UUID,
+
+    /* application type */
+    BLE_DFU_APP_TYPE_UUID,
+
+    /* dfu packet */
+    BLE_DFU_PKT_CHAR_UUID,
+
+    /* dfu controle */
+    BLE_DFU_CTRL_PT_UUID,
+
+    /* dfu status */
+    BLE_DFU_STATUS_REP_UUID
+} ble_dfu_uuid_t;
 
 /**@brief   DFU Event type.
  *
