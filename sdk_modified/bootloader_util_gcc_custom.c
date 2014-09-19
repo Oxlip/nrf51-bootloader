@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include "nordic_common.h"
 #include "bootloader_types.h"
-#include "dfu_types.h"
+#include "dfu_types_custom.h"
 #include "dfu_custom.h"
 
 #if __GNUC__ && __ARM_EABI__

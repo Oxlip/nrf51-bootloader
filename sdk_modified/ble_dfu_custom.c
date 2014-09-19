@@ -10,7 +10,7 @@
  *
  */
 
-#include "ble_dfu.h"
+#include "ble_dfu_custom.h"
 #include "nrf_error.h"
 #include "ble_types.h"
 #include "ble_gatts.h"

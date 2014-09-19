@@ -12,7 +12,7 @@
 
 #include "dfu_transport.h"
 #include "dfu.h"
-#include "dfu_types.h"
+#include "dfu_types_custom.h"
 #include <stddef.h>
 #include <string.h>
 #include "nrf51.h"
@@ -28,7 +28,7 @@
 #include "ble_gatt.h"
 #include "ble_hci.h"
 #include "boards.h"
-#include "ble_dfu.h"
+#include "ble_dfu_custom.h"
 #include "nordic_common.h"
 #include "app_timer.h"
 #include "ble_flash.h"

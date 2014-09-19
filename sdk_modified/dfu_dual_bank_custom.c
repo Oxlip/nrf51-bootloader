@@ -14,7 +14,7 @@
 #include <stddef.h>
 #include <string.h>
 #include "dfu.h"
-#include "dfu_types.h"
+#include "dfu_types_custom.h"
 #include "dfu_bank_internal.h"
 #include "nrf.h"
 #include "nrf51.h"
