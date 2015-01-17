@@ -14,8 +14,8 @@ import logging
 from tools import logger, TEST_FAILED, TEST_SUCCESS, getBoard, getDriver
 from nrf51 import NRF51
 
-from  udriver import ubledriver
-from  udriver import datahelper
+from ble_tools.udriver import ubledriver
+from ble_tools.udriver import datahelper
 
 class TestApp:
 
