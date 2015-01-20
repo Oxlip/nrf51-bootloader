@@ -164,10 +164,17 @@ class NRF51(object):
    def reboot(self):
       cmd = JLinkReboot()
       cmd.execute()
+      logger.info('Reboot Done')
 
    def reset(self):
+      logger.info('SoftDevice flash...')
       cmd = JLinkFlash(JLinkFlash.FLASH_SD)
       cmd.execute()
+      logger.info('UICR flash...')
       cmd = JLinkFlash(JLinkFlash.FLASH_UICR)
       cmd.execute()
- 
+      logger.info('BootLoader flash...')
+      cmd = JLinkFlash(JLinkFlash.FLASH_APP)
+      cmd.execute()
+      logger.info('Reset Done')
+

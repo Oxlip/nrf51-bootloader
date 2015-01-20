@@ -38,6 +38,8 @@ class DFUTest:
       logger.passed('dfu: switch to dfu mode done')
 
    def dfu_test(self):
+      import time
+      time.sleep(2)
       umsg = { 'dest_id' : '#fake_serial', 'action' : 'infos' }
       self.driver.send_umsg(umsg)
       logger.passed('dfu: char test done')
@@ -55,6 +57,8 @@ class DFUTest:
       if not driver.is_init():
          logging.error('Unable to initialize ble driver')
          sys.exit(TEST_FAILED)
+
+      driver.run()
 
       self.board  = board
       self.driver = driver
