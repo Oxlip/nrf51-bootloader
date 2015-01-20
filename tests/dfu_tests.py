@@ -43,7 +43,7 @@ class DFUTest:
    def precheck(self):
       board = NRF51()
 
-      if not board.is_connect():
+      if not board.is_available():
          logger.error('Unable to contact the board')
          sys.exit(TEST_FAILED)
 

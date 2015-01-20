@@ -4,3 +4,6 @@
 [submodule "tests/ble_tools"]
 	path = tests/ble_tools
 	url = https://github.com/astraliot/ble-tools.git
+[submodule "tests/nrftool"]
+	path = tests/nrftool
+	url = https://github.com/pauloborges/nrftool.git
