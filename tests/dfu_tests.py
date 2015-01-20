@@ -50,7 +50,7 @@ class DFUTest:
       driver = ubledriver.uBleDriver()
       driver.init()
 
-      if driver.is_init():
+      if not driver.is_init():
          logging.error('Unable to initialize ble driver')
          sys.exit(TEST_FAILED)
 
