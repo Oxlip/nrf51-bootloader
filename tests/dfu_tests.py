@@ -38,6 +38,8 @@ class DFUTest:
       logger.passed('dfu: switch to dfu mode done')
 
    def dfu_test(self):
+      umsg = { 'dest_id' : '#fake_serial', 'action' : 'infos' }
+      self.driver.send_umsg(umsg)
       logger.passed('dfu: char test done')
 
    def precheck(self):
