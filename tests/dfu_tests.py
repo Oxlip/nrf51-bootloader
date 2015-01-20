@@ -50,7 +50,7 @@ class DFUTest:
       driver = ubledriver.uBleDriver()
       driver.init()
 
-      if not driver.is_init():
+      if driver.is_init():
          logging.error('Unable to initialize ble driver')
          sys.exit(TEST_FAILED)
 
@@ -92,6 +92,7 @@ if __name__ == '__main__':
       logger.exception(e)
       res = TEST_FAILED
    except:
+      logger.info('Tests have exit')
       res = TEST_FAILED
    finally:
       sys.exit(res)

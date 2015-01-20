@@ -1,0 +1,5 @@
+r
+loadbin {firmware} {address}
+r
+g
+exit
