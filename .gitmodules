@@ -7,3 +7,6 @@
 [submodule "tests/nrftool"]
 	path = tests/nrftool
 	url = https://github.com/pauloborges/nrftool.git
+[submodule "nrf51-sdk"]
+	path = nrf51-sdk
+	url = https://github.com/astraliot/nrf51-sdk.git
