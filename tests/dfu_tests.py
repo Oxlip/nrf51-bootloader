@@ -10,6 +10,8 @@
 # 8) test the test_app3
 
 import sys
+import time
+import json
 import logging
 from tools import logger, TEST_FAILED, TEST_SUCCESS, getBoard, getDriver
 from nrf51 import NRF51
@@ -38,11 +40,33 @@ class DFUTest:
       logger.passed('dfu: switch to dfu mode done')
 
    def dfu_test(self):
-      import time
+      passed = True
       time.sleep(2)
       umsg = { 'dest_id' : '#fake_serial', 'action' : 'infos' }
-      self.driver.send_umsg(umsg)
-      logger.passed('dfu: char test done')
+      res = self.driver.send_umsg(umsg)
+
+      name_handle = None
+      main_serv = res['services'][0]
+      for char in main_serv['char']:
+         if char['uuid'] == '0x2803':
+            if char['value']['uuid'] == 'DEVINCE_NAME':
+               name_handle = char['value']['handle']
+
+      if name_handle is None:
+          logger.failed('Unable to found the device name')
+          passed = False
+      else:
+          umsg['action'] = 'read'
+          umsg['handle'] = name_handle
+          name = self.driver.send_umsg(umsg)
+          if not name == 'DfuTarg':
+             logger.failed('The device is not the dfu [%s]', name)
+             passed = False
+
+      if passed:
+         logger.passed('dfu: Charracterristic test passed')
+      else:
+         logger.failed('dfu: Charracterristic test failed')
 
    def precheck(self):
       board = NRF51()
