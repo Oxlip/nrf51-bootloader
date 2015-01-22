@@ -34,13 +34,13 @@
 
 typedef enum {
     /* ble service */
-    BLE_DFU_SERVICE_UUID = 0x1664,
-
-    /* dfu packet */
-    BLE_DFU_PKT_CHAR_UUID,
+    BLE_DFU_SERVICE_UUID = 0x1530,
 
     /* dfu controle */
     BLE_DFU_CTRL_PT_UUID,
+
+    /* dfu packet */
+    BLE_DFU_PKT_CHAR_UUID,
 
     /* dfu status */
     BLE_DFU_STATUS_REP_UUID
