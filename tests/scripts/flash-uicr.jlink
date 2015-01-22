@@ -1,5 +1,5 @@
 w4 4001e504 1
-loadbin {firmware} {address}
+loadbin "{firmware}" {address}
 r
 g
 exit

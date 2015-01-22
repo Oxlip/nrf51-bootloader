@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import tempfile
 import subprocess
 
@@ -32,7 +33,8 @@ class ExecJLinkScriptCommand(object):
       try:
          if not os.path.exists(script):
             raise JLinkError('script \'{script}\' not found'.format(script = script), -1)
-         output = subprocess.check_output([self.jlinkexe, script],
+         cmd = [ self.jlinkexe ] + '-device nrf51822 -if swd -speed 1000'.split(' ') + [ script ]
+         output = subprocess.check_output(cmd,
                                           universal_newlines = True,
                                           stderr = subprocess.STDOUT)
       except subprocess.CalledProcessError as exception:
@@ -48,6 +50,7 @@ class ExecJLinkScriptCommand(object):
          name = f.name
          f.write(stream)
 
+      logger.debug('tempfile %s', name)
       return name
 
    def process_output(self, output, verbose):
@@ -87,7 +90,7 @@ class JLinkFlash(ExecJLinkScriptCommand):
    addresses = {
       FLASH_SD   : 0,
       FLASH_UICR : 0x10001014,
-      FLASH_APP  : 0
+      FLASH_APP  : 0x30000
    }
 
    def __init__(self, ftype, firmware = None, address = None, **kwargs):
@@ -165,6 +168,7 @@ class NRF51(object):
       cmd = JLinkReboot()
       cmd.execute()
       logger.info('Reboot Done')
+      time.sleep(1)
 
    def reset(self):
       logger.info('SoftDevice flash...')
@@ -177,4 +181,5 @@ class NRF51(object):
       cmd = JLinkFlash(JLinkFlash.FLASH_APP)
       cmd.execute()
       logger.info('Reset Done')
+      time.sleep(1)
 

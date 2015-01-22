@@ -9,6 +9,7 @@
 # 7) reset the board with the ttyACM0
 # 8) test the test_app3
 
+import os
 import sys
 import time
 import json
@@ -19,6 +20,29 @@ from nrf51 import NRF51
 from ble_tools.udriver import ubledriver
 from ble_tools.udriver import datahelper
 
+def get_name(driver):
+   time.sleep(2)
+   umsg = { 'dest_id' : '#fake_serial', 'action' : 'infos' }
+   res = driver.send_umsg(umsg)
+
+   name_handle = None
+   main_serv = res['services'][0]
+   for char in main_serv['char']:
+      if char['uuid'] == '0x2803':
+         if char['value']['uuid'] == 'DEVINCE_NAME':
+            name_handle = char['value']['handle']
+
+   if name_handle is None:
+      logger.failed('Unable to found the device name')
+      return None
+  
+   umsg['action'] = 'read'
+   umsg['handle'] = name_handle
+   name = driver.send_umsg(umsg)
+   return name    
+
+
+
 class TestApp:
 
    app_name_fmt = 'test_app_{stage}'
@@ -27,46 +51,45 @@ class TestApp:
       self.stage    = stage
       self.app_name = self.app_name_fmt.format(stage = stage)
 
-   def load(self):
+   def load(self, driver):
+      umsg = {
+         'dest_id' : '#fake_serial',
+         'action'  : 'dfu',
+         'file'    : sys.argv[1]
+      }
+
+      if not os.path.exists(umsg['file']):
+         logger.error('Unable to found the file \'%s\'', umsg['file'])
+         return
+
+      file_stat = os.stat(umsg['file'])
+      umsg['file_size'] = file_stat.st_size
+
+      if not driver.send_umsg(umsg):
+         logger.failed('Unable to load the new app %s', umsg['file'])
+         return 
+
       logger.passed('%s: app is loaded', self.app_name)
 
-   def test(self):
-      logger.passed('%s: test done', self.app_name)
+   def test(self, driver):
+      name = get_name(driver)
+      if not name == 'uPlug':
+         logger.failed('The device is not the dfu [%s]', name)
+      else:
+         logger.passed('dfu: Charracterristic test passed')
 
 
 class DFUTest:
 
    def dfu_switch(self):
-      logger.passed('dfu: switch to dfu mode done')
+     logger.passed('dfu: switch to dfu mode done')
 
    def dfu_test(self):
-      passed = True
-      time.sleep(2)
-      umsg = { 'dest_id' : '#fake_serial', 'action' : 'infos' }
-      res = self.driver.send_umsg(umsg)
-
-      name_handle = None
-      main_serv = res['services'][0]
-      for char in main_serv['char']:
-         if char['uuid'] == '0x2803':
-            if char['value']['uuid'] == 'DEVINCE_NAME':
-               name_handle = char['value']['handle']
-
-      if name_handle is None:
-          logger.failed('Unable to found the device name')
-          passed = False
+      name = get_name(self.driver)
+      if not name == 'DfuTarg':
+         logger.failed('The device is not the dfu [%s]', name)
       else:
-          umsg['action'] = 'read'
-          umsg['handle'] = name_handle
-          name = self.driver.send_umsg(umsg)
-          if not name == 'DfuTarg':
-             logger.failed('The device is not the dfu [%s]', name)
-             passed = False
-
-      if passed:
          logger.passed('dfu: Charracterristic test passed')
-      else:
-         logger.failed('dfu: Charracterristic test failed')
 
    def precheck(self):
       board = NRF51()
@@ -103,14 +126,14 @@ class DFUTest:
                self.dfu_switch()
             self.dfu_test()
             app = TestApp(idx)
-            app.load()
-            app.test()
+            app.load(self.driver)
+            app.test(self.driver)
          except Exception, e:
             logger.exception(e)
             res = TEST_FAILED
 
       self.board.reboot()
-      app.test()
+      app.test(self.driver)
 
       return res
 
