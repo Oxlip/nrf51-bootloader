@@ -296,6 +296,7 @@ int main(void)
     debug_init();
 
     leds_init();
+    leds_off();
 
     // This check ensures that the defined fields in the bootloader corresponds with actual
     // setting in the nRF51 chip.

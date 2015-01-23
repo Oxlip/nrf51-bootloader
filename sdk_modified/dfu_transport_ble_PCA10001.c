@@ -37,7 +37,7 @@
 #include "bootloader.h"
 
 #define ADVERTISING_LED_PIN_NO               LED_0                                                   /**< Is on when device is advertising. */
-#define CONNECTED_LED_PIN_NO                 LED_0                                                   /**< Is on when device has connected. */
+#define CONNECTED_LED_PIN_NO                 LED_1                                                   /**< Is on when device has connected. */
 #define ASSERT_LED_PIN_NO                    LED_1                                                   /**< Is on when application has asserted. */
 
 
