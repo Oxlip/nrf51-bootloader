@@ -26,7 +26,7 @@
 #define PKT_START_DFU_PARAM_LEN 2                                               /**< Length (in bytes) of the parameters for Packet Start DFU Request. */
 #define PKT_RCPT_NOTIF_REQ_LEN  3                                               /**< Length (in bytes) of the Packet Receipt Notification Request. */
 #define MAX_PKTS_RCPT_NOTIF_LEN 6                                               /**< Maximum length (in bytes) of the Packets Receipt Notification. */
-#define MAX_RESPONSE_LEN        7                                               /**< Maximum length (in bytes) of the response to a Control Point command. */
+#define MAX_RESPONSE_LEN        20                                               /**< Maximum length (in bytes) of the response to a Control Point command. */
 #define MAX_NOTIF_BUFFER_LEN    MAX(MAX_PKTS_RCPT_NOTIF_LEN, MAX_RESPONSE_LEN)  /**< Maximum length (in bytes) of the buffer needed by DFU Service while sending notifications to peer. */
 
 enum
