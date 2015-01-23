@@ -42,10 +42,10 @@ SOFTDEVICE = $(EXTERNAL_PATH)/s110_nrf51822_7.0.0_softdevice.hex
 SOURCE_PATHS  += src sdk_modified
 LIBRARY_PATHS += include
 LIBRARY_PATHS += $(SDK_PATH)/Include/bootloader_dfu
-LIBRARY_PATHS += $(SDK_PATH)/Include/bootloader_dfu/hci_transport
+LIBRARY_PATHS += $(SDK_PATH)/Include/bootloader_dfu/ble_transport
 
 #CFLAGS  = -O2
-CFLAGS  += -DDEBUG -g3 -O0 -I . -Werror
+CFLAGS  += -g3 -O0 -I . -Werror
 LDFLAGS += --specs=nano.specs -u _printf_float
 
 GDB_PORT_NUMBER = 2331
