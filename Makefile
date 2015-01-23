@@ -12,6 +12,7 @@ SDK_SRCS += ble_conn_params.c
 SDK_SRCS += ble_advdata.c
 SDK_SRCS += ble_srv_common.c
 SDK_SRCS += ble_debug_assert_handler.c
+SDK_SRCS += simple_uart.c
 
 # Modified version of sdk file
 SDK_SRCS += ble_dfu_custom.c
@@ -45,7 +46,7 @@ LIBRARY_PATHS += $(SDK_PATH)/Include/bootloader_dfu/hci_transport
 
 #CFLAGS  = -O2
 CFLAGS  += -DDEBUG -g3 -O0 -I . -Werror
-LDFLAGS += -g3
+LDFLAGS += --specs=nano.specs -u _printf_float
 
 GDB_PORT_NUMBER = 2331
 
