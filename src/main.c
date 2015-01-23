@@ -17,9 +17,9 @@
  * @ingroup dfu_bootloader_api
  * @brief Bootloader project main file.
  *
- * -# Receive start data packet. 
- * -# Based on start packet, prepare NVM area to store received data. 
- * -# Receive data packet. 
+ * -# Receive start data packet.
+ * -# Based on start packet, prepare NVM area to store received data.
+ * -# Receive data packet.
  * -# Validate data packet.
  * -# Write Data packet to NVM.
  * -# If not finished - Wait for next packet.
@@ -53,6 +53,7 @@
 #include "softdevice_handler.h"
 #include "pstorage_platform.h"
 #include "nrf_mbr.h"
+#include "simple_uart.h"
 
 #define IS_SRVC_CHANGED_CHARACT_PRESENT 0                                                       /**< Include or not the service_changed characteristic. if not enabled, the server's database cannot be changed for the lifetime of the device*/
 
@@ -76,17 +77,17 @@
 #define SCHED_QUEUE_SIZE                20                                                      /**< Maximum number of events in the scheduler queue. */
 
 
-/**@brief Function for error handling, which is called when an error has occurred. 
+/**@brief Function for error handling, which is called when an error has occurred.
  *
- * @warning This handler is an example only and does not fit a final product. You need to analyze 
+ * @warning This handler is an example only and does not fit a final product. You need to analyze
  *          how your product is supposed to react in case of error.
  *
  * @param[in] error_code  Error code supplied to the handler.
  * @param[in] line_num    Line number where the handler is called.
- * @param[in] p_file_name Pointer to the file name. 
+ * @param[in] p_file_name Pointer to the file name.
  */
 void app_error_handler(uint32_t error_code, uint32_t line_num, const uint8_t * p_file_name)
-{    
+{
     nrf_gpio_pin_set(LED_7);
     // This call can be used for debug purposes during application development.
     // @note CAUTION: Activating this code will write the stack to flash on an error.
@@ -97,6 +98,17 @@ void app_error_handler(uint32_t error_code, uint32_t line_num, const uint8_t * p
     //                Use with care. Un-comment the line below to use.
     // ble_debug_assert_handler(error_code, line_num, p_file_name);
 
+#ifdef DEBUG
+    // This call can be used for debug purposes during application development.
+    // @note CAUTION: Activating this code will write the stack to flash on an error.
+    //                This function should NOT be used in a final product.
+    //                It is intended STRICTLY for development/debugging purposes.
+    //                The flash write will happen EVEN if the radio is active, thus interrupting
+    //                any communication.
+    //                Use with care. Un-comment the line below to use.
+    ble_debug_assert_handler(error_code, line_num, p_file_name);
+#endif
+
     // On assert, the system can only recover on reset.
     NVIC_SystemReset();
 }
@@ -106,7 +118,7 @@ void app_error_handler(uint32_t error_code, uint32_t line_num, const uint8_t * p
  *
  * @details This function will be called in case of an assert in the SoftDevice.
  *
- * @warning This handler is an example only and does not fit a final product. You need to analyze 
+ * @warning This handler is an example only and does not fit a final product. You need to analyze
  *          how your product is supposed to react in case of Assert.
  * @warning On assert from the SoftDevice, the system can only recover on reset.
  *
@@ -161,12 +173,14 @@ static void timers_init(void)
 /**@brief Function for initializing the button module.
  */
 static void buttons_init(void)
-{   
+{
     nrf_gpio_cfg_sense_input(BOOTLOADER_BUTTON_PIN,
-                             BUTTON_PULL, 
+                             BUTTON_PULL,
                              NRF_GPIO_PIN_SENSE_LOW);
 
 }
+
+
 
 
 /**@brief Function for dispatching a BLE stack event to all modules with a BLE stack event handler.
@@ -186,8 +200,8 @@ static void sys_evt_dispatch(uint32_t event)
  *
  * @details Initializes the SoftDevice and the BLE event interrupt.
  *
- * @param[in] init_softdevice  true if SoftDevice should be initialized. The SoftDevice must only 
- *                             be initialized if a chip reset has occured. Soft reset from 
+ * @param[in] init_softdevice  true if SoftDevice should be initialized. The SoftDevice must only
+ *                             be initialized if a chip reset has occured. Soft reset from
  *                             application must not reinitialize the SoftDevice.
  */
 static void ble_stack_init(bool init_softdevice)
@@ -200,21 +214,66 @@ static void ble_stack_init(bool init_softdevice)
         err_code = sd_mbr_command(&com);
         APP_ERROR_CHECK(err_code);
     }
-    
+
     err_code = sd_softdevice_vector_table_base_set(BOOTLOADER_REGION_START_CUSTOM);
     APP_ERROR_CHECK(err_code);
-   
+
     SOFTDEVICE_HANDLER_INIT(NRF_CLOCK_LFCLKSRC_XTAL_20_PPM, true);
 
-    // Enable BLE stack 
+    // Enable BLE stack
     ble_enable_params_t ble_enable_params;
     memset(&ble_enable_params, 0, sizeof(ble_enable_params));
     ble_enable_params.gatts_enable_params.service_changed = IS_SRVC_CHANGED_CHARACT_PRESENT;
     err_code = sd_ble_enable(&ble_enable_params);
     APP_ERROR_CHECK(err_code);
-    
+
     err_code = softdevice_sys_evt_handler_set(sys_evt_dispatch);
     APP_ERROR_CHECK(err_code);
+}
+
+
+/**@brief Implement _write() std library function.
+ *        This is needed for printf().
+ */
+int _write(int fd, const char * str, int len) __attribute__ ((used));
+int _write(int fd, const char * str, int len)
+{
+#ifdef DEBUG
+    for (int i = 0; i < len; i++)
+    {
+        simple_uart_put(str[i]);
+    }
+#endif
+    return len;
+}
+
+
+/**@brief Implement puts() std library function.
+ *        This is needed for printf()(which calls puts() if no argument is passed).
+ */
+int puts(const char *str)
+{
+#ifdef DEBUG
+    return _write(0, str, __builtin_strlen(str));
+#else
+    return 0;
+#endif
+}
+
+int fputc(int ch, FILE * p_file)
+{
+    simple_uart_put((uint8_t)ch);
+    return 0;
+}
+
+/**@brief Initialize debug functionality.
+ */
+static void debug_init(void)
+{
+#ifdef DEBUG
+    simple_uart_config(RTS_PIN_NUMBER, TX_PIN_NUMBER, CTS_PIN_NUMBER, RX_PIN_NUMBER, false);
+    printf("Firmware Date: %s %s\n", __DATE__, __TIME__);
+#endif
 }
 
 
@@ -233,6 +292,8 @@ int main(void)
     uint32_t err_code;
     bool     dfu_start = false;
     bool     app_reset = (NRF_POWER->GPREGRET == BOOTLOADER_DFU_START);
+
+    debug_init();
 
     leds_init();
 
@@ -267,7 +328,7 @@ int main(void)
 
     dfu_start  = app_reset;
     dfu_start |= ((nrf_gpio_pin_read(BOOTLOADER_BUTTON_PIN) == 0) ? true: false);
-    
+
     if (dfu_start || (!bootloader_app_is_valid(DFU_BANK_0_REGION_START)))
     {
         err_code = sd_power_gpregret_clr(POWER_GPREGRET_GPREGRET_Msk);
@@ -295,6 +356,6 @@ int main(void)
     nrf_gpio_pin_clear(LED_1);
     nrf_gpio_pin_clear(LED_2);
     nrf_gpio_pin_clear(LED_7);
-    
+
     NVIC_SystemReset();
 }

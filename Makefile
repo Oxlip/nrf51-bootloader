@@ -11,6 +11,8 @@ SDK_SRCS += nrf_delay.c
 SDK_SRCS += ble_conn_params.c
 SDK_SRCS += ble_advdata.c
 SDK_SRCS += ble_srv_common.c
+SDK_SRCS += ble_debug_assert_handler.c
+SDK_SRCS += simple_uart.c
 
 # Modified version of sdk file
 SDK_SRCS += ble_dfu_custom.c
@@ -32,7 +34,7 @@ BOARD = BOARD_PCA10001
 USE_SOFTDEVICE = s110
 
 EXTERNAL_PATH = $(MAKEFILE_DIR)/external
-SDK_PATH = /opt/nrf51sdk/nrf51822/
+SDK_PATH      = $(MAKEFILE_DIR)/nrf51-sdk/
 MAKEFILE_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 TEMPLATE_PATH = $(MAKEFILE_DIR)/nrf51-pure-gcc-setup/template/
 SOFTDEVICE = $(EXTERNAL_PATH)/s110_nrf51822_7.0.0_softdevice.hex
@@ -40,10 +42,11 @@ SOFTDEVICE = $(EXTERNAL_PATH)/s110_nrf51822_7.0.0_softdevice.hex
 SOURCE_PATHS  += src sdk_modified
 LIBRARY_PATHS += include
 LIBRARY_PATHS += $(SDK_PATH)/Include/bootloader_dfu
-LIBRARY_PATHS += $(SDK_PATH)/Include/bootloader_dfu/hci_transport
+LIBRARY_PATHS += $(SDK_PATH)/Include/bootloader_dfu/ble_transport
 
 #CFLAGS  = -O2
-CFLAGS  = -DDEBUG -g3 -O0 -I . -Werror
+CFLAGS  += -g3 -O0 -I . -Werror
+LDFLAGS += --specs=nano.specs -u _printf_float
 
 GDB_PORT_NUMBER = 2331
 

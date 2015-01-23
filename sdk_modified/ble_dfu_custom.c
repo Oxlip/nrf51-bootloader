@@ -26,7 +26,7 @@
 #define PKT_START_DFU_PARAM_LEN 2                                               /**< Length (in bytes) of the parameters for Packet Start DFU Request. */
 #define PKT_RCPT_NOTIF_REQ_LEN  3                                               /**< Length (in bytes) of the Packet Receipt Notification Request. */
 #define MAX_PKTS_RCPT_NOTIF_LEN 6                                               /**< Maximum length (in bytes) of the Packets Receipt Notification. */
-#define MAX_RESPONSE_LEN        7                                               /**< Maximum length (in bytes) of the response to a Control Point command. */
+#define MAX_RESPONSE_LEN        20                                               /**< Maximum length (in bytes) of the response to a Control Point command. */
 #define MAX_NOTIF_BUFFER_LEN    MAX(MAX_PKTS_RCPT_NOTIF_LEN, MAX_RESPONSE_LEN)  /**< Maximum length (in bytes) of the buffer needed by DFU Service while sending notifications to peer. */
 
 enum
@@ -408,8 +408,8 @@ uint32_t ble_dfu_init(ble_dfu_t * p_dfu, ble_dfu_init_t * p_dfu_init)
     const ble_uuid128_t base_uuid128 =
     {
         {
-            0x0A, 0x95, 0xE8, 0xC0, 0x02, 0x09, 0xA0, 0xAB,
-            0x85, 0x40, 0x24, 0x93, 0x00, 0x00, 0xF4, 0xC0
+            0x23, 0xD1, 0xBC, 0xEA, 0x5F, 0x78, 0x23, 0x15,
+            0xDE, 0xEF, 0x12, 0x12, 0x00, 0x00, 0x00, 0x00
         }
     };
 

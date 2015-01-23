@@ -1,3 +1,12 @@
 [submodule "nrf51-pure-gcc-setup"]
 	path = nrf51-pure-gcc-setup
 	url = https://github.com/samueldotj/nrf51-pure-gcc-setup.git
+[submodule "tests/ble_tools"]
+	path = tests/ble_tools
+	url = https://github.com/astraliot/ble-tools.git
+[submodule "tests/nrftool"]
+	path = tests/nrftool
+	url = https://github.com/pauloborges/nrftool.git
+[submodule "nrf51-sdk"]
+	path = nrf51-sdk
+	url = https://github.com/astraliot/nrf51-sdk.git
